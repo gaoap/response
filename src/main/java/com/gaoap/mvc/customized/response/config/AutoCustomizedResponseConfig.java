@@ -7,6 +7,7 @@ import com.gaoap.mvc.customized.response.data.Response;
 import com.gaoap.mvc.customized.response.data.ResponseStatus;
 import com.gaoap.mvc.customized.response.factory.ResponseFactory;
 import com.gaoap.mvc.customized.response.factory.ResponseStatusFactory;
+import com.gaoap.mvc.customized.response.factory.ValidationResponseStatusFactory;
 import com.gaoap.mvc.customized.response.factory.defaults.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,6 +25,27 @@ public class AutoCustomizedResponseConfig {
     @ConditionalOnProperty(prefix = "customized.response", name = "responseStatusStyle", havingValue = "0", matchIfMissing = true)
     public ResponseStatus responseStatus() {
         return new DefaultResponseStatus();
+    }
+
+    @Bean
+    @Scope("prototype")
+    @ConditionalOnProperty(prefix = "customized.response", name = "responseStyle", havingValue = "0", matchIfMissing = true)
+    public Response response0() {
+        return new DefaultResponseImplStyle0();
+    }
+
+    @Bean
+    @Scope("prototype")
+    @ConditionalOnProperty(prefix = "customized.response", name = "validationResponseStatusFactoryStyle", havingValue = "0", matchIfMissing = true)
+    public ValidationResponseStatusFactory validationResponseStatusFactory() {
+        return new DefaultValidationResponseStatusFactory();
+    }
+
+    @Bean
+    @Scope("prototype")
+    @ConditionalOnProperty(prefix = "customized.response", name = "responseStyle", havingValue = "1", matchIfMissing = false)
+    public Response response1() {
+        return new DefaultResponseImplStyle1();
     }
 
     @Bean
@@ -51,24 +73,11 @@ public class AutoCustomizedResponseConfig {
         return new DefaultResponseFactory();
     }
 
-    @Bean
-    @Scope("prototype")
-    @ConditionalOnProperty(prefix = "customized.response", name = "responseStyle", havingValue = "0", matchIfMissing = true)
-    public Response response0() {
-        return new DefaultResponseImplStyle0();
-    }
-
-    @Bean
-    @Scope("prototype")
-    @ConditionalOnProperty(prefix = "customized.response", name = "responseStyle", havingValue = "1", matchIfMissing = false)
-    public Response response1() {
-        return new DefaultResponseImplStyle1();
-    }
 
     @Bean
     @ConditionalOnMissingBean(value = {ResponseStatusFactory.class})
     public ResponseStatusFactory responseStatusFactory() {
-        return new DefaultResponseStatusFactoryImpl();
+        return new DefaultResponseStatusFactory();
     }
 
 

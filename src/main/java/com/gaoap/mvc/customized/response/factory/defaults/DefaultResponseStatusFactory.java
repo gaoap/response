@@ -7,7 +7,7 @@ import com.gaoap.mvc.customized.response.factory.ResponseStatusFactory;
 
 import javax.annotation.Resource;
 
-public class DefaultResponseStatusFactoryImpl implements ResponseStatusFactory {
+public class DefaultResponseStatusFactory implements ResponseStatusFactory {
 
     @Resource
     private CustomizedResponseProperties properties;

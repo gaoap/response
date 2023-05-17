@@ -8,6 +8,7 @@ import com.gaoap.mvc.customized.response.data.Response;
 import com.gaoap.mvc.customized.response.data.ResponseStatus;
 import com.gaoap.mvc.customized.response.factory.ResponseFactory;
 import com.gaoap.mvc.customized.response.factory.ResponseStatusFactory;
+import com.gaoap.mvc.customized.response.factory.ValidationResponseStatusFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,6 +33,8 @@ public class GlobalExceptionAdvice {
 
     @Resource
     private CustomizedResponseProperties customizedResponseProperties;
+    @Resource
+    private ValidationResponseStatusFactory validationResponseStatusFactory;
 
     /**
      * 异常处理逻辑.
@@ -45,20 +48,14 @@ public class GlobalExceptionAdvice {
         if (customizedResponseProperties.isPrintException()) {
             log.error("全局捕获到异常", throwable);
         }
-        ResponseStatus responseStatus;
-
-            responseStatus = fromExceptionClass(throwable.getClass());
-
-
+        ResponseStatus responseStatus = fromExceptionClass(throwable);
         return responseFactory.newInstance(responseStatus);
     }
 
+    private ResponseStatus fromExceptionClass(Throwable throwable) {
 
-
-    private ResponseStatus fromExceptionClass(Class<? extends Throwable> clazz) {
-
-        ExceptionMapper exceptionMapper = clazz.getAnnotation(ExceptionMapper.class);
-
+        ExceptionMapper exceptionMapper = throwable.getClass().getAnnotation(ExceptionMapper.class);
+        //自定义的异常
         if (exceptionMapper != null) {
             return responseStatusFactory.newInstance(exceptionMapper.code(),
                     exceptionMapper.msg());
@@ -66,14 +63,14 @@ public class GlobalExceptionAdvice {
 
         //获取已注册的别名
         if (exceptionAliasRegister != null) {
-            ExceptionAliasFor exceptionAliasFor = exceptionAliasRegister.getExceptionAliasFor(clazz);
+            ExceptionAliasFor exceptionAliasFor = exceptionAliasRegister.getExceptionAliasFor(throwable.getClass());
             if (exceptionAliasFor != null) {
                 return responseStatusFactory.newInstance(exceptionAliasFor.code(),
                         exceptionAliasFor.msg());
             }
         }
+        return validationResponseStatusFactory.makeResponseStatus(throwable);
 
-        return responseStatusFactory.defaultFail();
     }
 
 }

@@ -6,7 +6,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "customized.response")
 @Data
 public class CustomizedResponseProperties {
-    private boolean jsonIgnore = true;
+    /**
+     * validation框架校验错误提示错误码
+     */
+    private String filed_validation_code = "-1111";
+    /**
+     * validationResponseStatusFactory的风格
+     * validationResponseStatusFactoryStyle==0,validationResponseStatusFactory的风格 DefaultValidationResponseStatusFactory
+     * 其他值，自定义实现ValidationResponseStatusFactoryStyle
+     */
+    private Integer validationResponseStatusFactoryStyle = 0;
     private boolean printException = true;
 
     /**
