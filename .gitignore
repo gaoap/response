@@ -24,3 +24,5 @@ hs_err_pid*
 replay_pid*
 /.idea/
 /target/
+/gaoyd_0x32B17521_SECRET.gpg
+/注冊密钥.txt
